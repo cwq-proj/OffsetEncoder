@@ -77,7 +77,7 @@ The repository is organized into two main folders:
 
 1. **core_encoder**: This folder contains the core implementation of the encoding tool as per the requirements. It includes the encoding logic, decoding logic, and associated test cases. For detailed instructions on how to use this tool, please refer to the next section.
 
-2. **web_application**: An extension to **core_encoder**, this folder contains a web application to demonstrate how the coding tool can be deployed and accessed by users. The web application was built using Spring Boot for the backend.
+2. **web_application**: An extension to **core_encoder**, this folder contains a web application to demonstrate how the coding tool can be deployed and accessed by users. The web application was built using React.js for the frontend and Spring Boot for the backend.
 
 The Spring Boot web application depends on the classes from the core_encoder folder. The root directory contains a parent pom.xml file that orchestrates the build process. It first builds the core_encoder and then the Spring Boot application after the core_encoder is built.
 
@@ -92,10 +92,10 @@ This project was built using Maven and it includes the additional dependencies a
 - Maven Surefire Plugin (for testing duing build process)
 
 The key components in this code are:
-- Reference Table: This class manages the mapping between indexes and characters, essential for the encoding process.
-- Encoder: This class implements the encoding and decoding logic based on the chosen offset character. It handles the transformation of plaintext to an obfuscated string and vice versa.
+- Reference Table: This class manages the mapping between indexes and characters.
+- Encoder: This class implements the encoding and decoding logic based on the chosen offset character. It handles the encoding of plaintext to an obfuscated string and vice versa.
 
-The code is tested using JUnit5 and Mockito. Ensure you have JDK 21 and maven installed to run the project.
+The code is tested using JUnit5 and Mockito.
 
 ### Design Overview
 
@@ -114,8 +114,11 @@ The design employs common object-oriented principles and design patterns to crea
 
 - Factory Pattern: The IndexCharTableFactory and OffsetEncoderFactory classes implement the factory pattern, providing a centralized way to create instances of AbstractIndexCharTable and AbstractOffsetEncoder, respectively, promoting code reusability and flexibility.
 
-### Build and Test
-To build and test the core_encoder, follow these steps. Note that the instructions are for linux:
+### Build and Test (For Linux)
+
+**Requirements:**
+- JDK 21
+- Maven
 
 1. Clone the repository.
 
@@ -125,50 +128,107 @@ To build and test the core_encoder, follow these steps. Note that the instructio
     ```
 
 3. Run the following Maven commands:
-    - Clean and install:
-      ```sh
-      mvn clean install
-      ```
+  - Clean and install:
+    ```sh
+    mvn clean install
+    ```
 
-    - Run tests:
-      ```sh
-      mvn test
-      ```
+  - Run tests:
+    ```sh
+    mvn test
+    ```
 
 ---
 
 ## Folder: web_application
 
-**Build Instructions for the entire web application**
+### Web Page Preview
+
+**Full page**
+![Web Page Full Size](images/webpage-fullsize.png)
+
+**Error Handling**
+If there are errors due to incorrect inputs:
+
+![Encoding and Decoding Error](images/error.png)
+
+**Successful Encoding and Decoding**
+When encoding and decoding operations are successful:
+
+![Encoding and Decoding Success](images/success.png)
+
+
+### Build Instructions for the entire web application (For Linux)
+
+**Requirements:**
+Backend:
+  - JDK 21
+  - Maven (for core_encoder)
+Frontend:
+  - Node.js: >= v21.7.3
+  - npm: >= 10.5.0
 
 1. Clone the repository.
 
 2. In the root directory, run the following Maven commands to build and test the project:
-   - Clean and install:
+  - Clean and install:
+    ```sh
+    mvn clean install
+    ```
+
+  - Run tests:
+    ```sh
+    mvn test
+    ```
+
+    Running these commands in the root directory ensures that the parent POM.xml will build the `core_encoder` first, followed by the Spring Boot application. Since the Spring Boot application uses files from the `core_encoder`, this ensures that all dependencies are properly resolved.
+
+3. Start the backend Spring Boot application:
+  - Run Spring Boot using Maven. From the root directory change into the directory contain Spring Boot:
+    ```sh
+    cd web_application/encoder.backend/
+    ```
+
+  - Run Spring Boot using Maven:
+    ```sh
+    mvn spring-boot:run
+    ```
+
+  - Alternatively, if you're using the Spring Initializr setup, you can run it with:
+    ```sh
+    ./mvnw spring-boot:run
+    ```
+
+4. Start the frontend React.Js:
+
+- In a new shell, from the root directory go to the directory contain React.Js
      ```sh
-     mvn clean install
+     cd web_application/encoder-frontend/
      ```
 
-   - Run tests:
-     ```sh
-     mvn test
-     ```
+- Run application:
+- To start in development mode
 
-   Running these commands in the root directory ensures that the parent POM.xml will build the `core_encoder` first, followed by the Spring Boot application. Since the Spring Boot application uses files from the `core_encoder`, this ensures that all dependencies are properly resolved.
+    ```sh
+    npm run dev
+    ```
 
-3. Start the Backend Spring Boot application (assuming it has already been built):
-
-   - Run Spring Boot using Maven:
-     ```sh
-     mvn spring-boot:run
-     ```
-
-   - Alternatively, if you're using the Spring Initializr setup, you can run it with:
-     ```sh
-     ./mvnw spring-boot:run
-     ```
+- To locally preview a production build
+     
+    ```sh
+    npm run build
+    npm run preview
+    ```
+     
+5. Access the webpage
+- http://localhost:3000 (both development mode and production build are using the same port)
 
 ---
+
+### React.js
+This React application was built using Vite and Tailwind CSS. It serves as an introductory user interface that allows users to try out the encoder class on a web page, enhancing user-friendliness. 
+
+The webpage provides a simple explanation of the encoder and decoder, and it includes functionality to make API calls to the Spring Boot application to encode/decode the text. Additionally, client-side validation is implemented to prevent erroneous inputs from being submitted, ensuring a smoother user experience.
 
 ### Spring Boot Application
 
@@ -179,7 +239,7 @@ This application has the following dependencies:
 - Spring Boot DevTools
 - Dependency from the core_encoder folder. Ensure that it is built by Maven first.
 
-The application contains a EncoderController class that provides the encode and decode methods. It was tested using JUnit 5 and Mockito.
+The application contains a EncoderController class that provides the encode and decode methods. Server-side validation has been implemented to ensure that only valid inputs are processed. The application was tested using JUnit 5 and Mockito.
 
 ## Additional Notes
-- The repository includes images and a PlantUML file in the `images` directory for design documentation.
+- The repository includes images in the `images` directory and a PlantUML file in the `uml` directory for design documentation.

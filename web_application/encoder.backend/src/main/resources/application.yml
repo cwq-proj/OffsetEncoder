@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: encoder.backend
+server:
+  port: 8080
+  error:
+    include-message: always

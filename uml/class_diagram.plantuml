@@ -1,0 +1,86 @@
+@startuml
+package reference_table{
+  abstract class AbstractIndexCharTable {
+    - minIndex: int
+    - maxIndex: int
+    - indexToCharMap: Map<Integer, Character>
+    - charToIndexMap: Map<Character, Integer>
+    - DEFAULT_INDEX_VALUE: int
+    - DEFAULT_REFERENCE_VALUE: char
+    + AbstractIndexCharTable(minIndex: int, maxIndex: int)
+    + getMinIndex(): int
+    + getMaxIndex(): int
+    + addMapping(idx: int, ref: char): void
+    + addReverseMapping(ref: char, idx: int): void
+    + getRefFromIndex(idx: int): char
+    + getIndexFromRef(ref: char): int
+    + containsRef(ref: char): boolean
+    + abstract initializeMappingTable(): void
+    + abstract adjustIndexInRange(idx: int): int
+  }
+
+  class ReferenceTable {
+    - LOWER_BOUND: int
+    - UPPER_BOUND: int
+    - ASCII_UPPER_CASE_START: int
+    - ASCII_UPPER_CASE_END: int
+    - ASCII_DIGIT_START: int
+    - ASCII_DIGIT_END: int
+    - ASCII_SYMBOL_START: int
+    - ASCII_SYMBOL_END: int
+    - CIRCULAR_ADJUSTMENT_OFFSET: int
+    + ReferenceTable()
+    + initializeMappingTable(): void
+    + adjustIndexInRange(idx: int): int
+  }
+
+  class IndexCharTableFactory {
+    + createReferenceTable(): AbstractIndexCharTable
+  }
+}
+
+package encoder{
+  abstract class AbstractOffsetEncoder <T> {
+    - refTable: AbstractIndexCharTable
+    - offset: T
+    + AbstractOffsetEncoder(refTable: AbstractIndexCharTable)
+    + AbstractOffsetEncoder(refTable: AbstractIndexCharTable, offset: T)
+    + getRefTable(): AbstractIndexCharTable
+    + getOffset(): T
+    + setOffset(offset: T): void
+    + abstract encode(plainText: String): String
+    + abstract decode(encodedText: String): String
+  }
+
+  class CharacterOffsetEncoder {
+    + CharacterOffsetEncoder(refTable: AbstractIndexCharTable)
+    + CharacterOffsetEncoder(refTable: AbstractIndexCharTable, offset: Character)
+    + setOffset(offset: Character): void
+    + encode(plainText: String): String
+    + decode(encodedText: String): String
+    - validatePlainText(plainText: String): void
+    - performEncoding(plainText: String): String
+    - validateEncodedText(encodedText: String): void
+    - performDecoding(encodedText: String): String
+  }
+
+  class InvalidOffsetException {
+    + InvalidOffsetException(message: String)
+  }
+
+  class OffsetEncoderFactory {
+    + createOffsetEncoder(refTable: AbstractIndexCharTable): AbstractOffsetEncoder<Character>
+    + createOffsetEncoder(refTable: AbstractIndexCharTable, offset: Character): AbstractOffsetEncoder<Character>
+  }
+
+}
+
+
+AbstractOffsetEncoder <|-- CharacterOffsetEncoder
+InvalidOffsetException --|> RuntimeException
+AbstractIndexCharTable <|-- ReferenceTable
+IndexCharTableFactory ..> AbstractIndexCharTable : creates
+AbstractOffsetEncoder ..> AbstractIndexCharTable: depends on
+OffsetEncoderFactory ..> AbstractIndexCharTable: depends on
+OffsetEncoderFactory ..> AbstractOffsetEncoder : creates
+@enduml

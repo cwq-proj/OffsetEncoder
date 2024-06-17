@@ -1,2 +1,137 @@
-# OffsetEncoder
-Simple character encoder and decoder that obfuscates plaintext messages using a reference table and an offset character.
+# Encoding/Decoding Tool
+
+## Introduction
+This repository showcases an encoding/decoding tool. The encoder takes plaintext and encodes it into an obfuscated string using a character logic. The decoding process reverses this operation.
+
+### Encoding Reference Table
+
+| Index | Reference Table | Shift Table #1|
+|-|-|-|
+| 0  | A | / |
+| 1  | B | A |
+| 2  | C | B |
+| 3  | D | C |
+| 4  | E | D |
+| 5  | F | E |
+| 6  | G | F |
+| 7  | H | G |
+| 8  | I | H |
+| 9  | J | I |
+| 10 | K | J |
+| 11 | L | K |
+| 12 | M | L |
+| 13 | N | M |
+| 14 | O | N |
+| 15 | P | O |
+| 16 | Q | P |
+| 17 | R | Q |
+| 18 | S | R |
+| 19 | T | S |
+| 20 | U | T |
+| 21 | V | U |
+| 22 | W | V |
+| 23 | X | W |
+| 24 | Y | X |
+| 25 | Z | Y |
+| 26 | 0 | Z |
+| 27 | 1 | 0 |
+| 28 | 2 | 1 |
+| 29 | 3 | 2 |
+| 30 | 4 | 3 |
+| 31 | 5 | 4 |
+| 32 | 6 | 5 |
+| 33 | 7 | 6 |
+| 34 | 8 | 7 |
+| 35 | 9 | 8 |
+| 36 | ( | 9 |
+| 37 | ) | ( |
+| 38 | * | ) |
+| 39 | + | * |
+| 40 | , | + |
+| 41 | - | , |
+| 42 | . | - |
+| 43 | / | . |
+
+### Encoding Logic
+- Choose any character in the reference table as the offset.
+- The first character of the encoded message will be used as the offset character.
+- The encoded text will be shifted by the index of offset character.
+- Any character not in the reference table will be mapped back to the same character.
+
+**Encoding Example**
+- If the offset character is 'B', the entire table will shift by one element down (Refer to Shift Table #1).
+- Thus, given the plaintext 'HELLO WORLD', it will be encoded to '**B**GDKKN VNQKC'.
+
+### Decoding Logic
+- The first character off the encoded text will be taken as the offset character.
+- The encoded text will be matched backwards to get the original plaintext.
+- Any character not in the reference table will be mapped back to the same character.
+
+**Decoding Example**
+- Given the encoded text '**B**GDKKN VNQKC', 'B' will be taken as the offset and decoded to 'HELLO WORLD' (Refer to Shift Table #1).
+
+---
+
+## Repository Structure
+The repository is contains one main folder:
+
+**core_encoder**: This folder contains the core implementation of the encoding tool as per the requirements. It includes the encoding logic, decoding logic, and associated test cases. For detailed instructions on how to use this tool, please refer to the next section.
+
+---
+
+## Folder: core_encoder
+
+This folder contains the implementation of the encoding and decoding tool.
+This project was built using Maven and it includes the additional dependencies and dependencies:
+- JUnit5
+- Mockito
+- Maven Surefire Plugin (for testing duing build process)
+
+The key components in this code are:
+- Reference Table: This class manages the mapping between indexes and characters, essential for the encoding process.
+- Encoder: This class implements the encoding and decoding logic based on the chosen offset character. It handles the transformation of plaintext to an obfuscated string and vice versa.
+
+The code is tested using JUnit5 and Mockito. Ensure you have JDK 21 and maven installed to run the project.
+
+### Design Overview
+
+![Class Diagram](images/class_diagram.png)
+
+
+The design employs common object-oriented principles and design patterns to create a modular and flexible encoding/decoding tool.
+
+- Abstraction: Defines a common interface (AbstractIndexCharTable, AbstractOffsetEncoder) without specifying implementation details, promoting code reusability.
+
+- Encapsulation: Hides the internal state and implementation details of classes.
+
+- Single Responsibility Principle: Each class has a single responsibility, such as managing the reference table (ReferenceTable), encoding/decoding text (CharacterOffsetEncoder), and handling exceptions (InvalidOffsetException).
+
+- Dependency Injection: The AbstractOffsetEncoder class uses dependency injection to decouple from the AbstractIndexCharTable, enhancing testability and flexibility.
+
+- Factory Pattern: The IndexCharTableFactory and OffsetEncoderFactory classes implement the factory pattern, providing a centralized way to create instances of AbstractIndexCharTable and AbstractOffsetEncoder, respectively, promoting code reusability and flexibility.
+
+### Build and Test
+To build and test the core_encoder, follow these steps. Note that the instructions are for linux:
+
+1. Clone the repository.
+
+2. Navigate to the core_encoder directory:
+    ```sh
+    cd core_encoder
+    ```
+
+3. Run the following Maven commands:
+    - Clean and install:
+      ```sh
+      mvn clean install
+      ```
+
+    - Run tests:
+      ```sh
+      mvn test
+      ```
+
+---
+
+## Additional Notes
+- The repository includes images and a PlantUML file in the `images` directory for design documentation.
